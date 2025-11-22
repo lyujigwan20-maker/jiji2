@@ -2,11 +2,11 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>게시판 2개가 있는 홈페이지 예시</title>
+  <title>JG 홈페이지 - 메인</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
-    /* ========== 전체 레이아웃 & 기본 스타일 ========== */
+    /* ===== 공통 스타일 ===== */
     * {
       box-sizing: border-box;
       margin: 0;
@@ -15,7 +15,7 @@
     }
 
     body {
-      background: #0f172a; /* 네비게이션/카드와 어울리는 딥블루 배경 */
+      background: #0f172a;
       color: #e5e7eb;
       line-height: 1.6;
     }
@@ -26,19 +26,19 @@
     }
 
     .container {
-      max-width: 1100px;     /* 페이지 전체 최대 폭 */
-      margin: 0 auto;        /* 가운데 정렬 */
+      max-width: 960px;
+      margin: 0 auto;
       padding: 0 16px;
     }
 
-    /* ========== 상단 헤더/네비게이션 ========== */
+    /* ===== 상단 헤더 / 네비게이션 ===== */
     header {
-      position: sticky;       /* 스크롤해도 상단에 고정 */
+      position: sticky;
       top: 0;
       z-index: 10;
       backdrop-filter: blur(10px);
-      background: rgba(15, 23, 42, 0.9); /* 반투명 배경 */
-      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.4);
     }
 
     nav {
@@ -63,557 +63,62 @@
     .nav-links a {
       opacity: 0.8;
     }
-
     .nav-links a:hover {
       opacity: 1;
     }
 
-    /* ========== 메인 히어로 섹션 ========== */
+    /* ===== 히어로 영역 (첫 인사) ===== */
     .hero {
-      padding: 40px 0 24px;
+      padding: 60px 0 30px;
       text-align: center;
     }
 
     .hero h1 {
-      font-size: clamp(28px, 5vw, 36px);
+      font-size: clamp(28px, 5vw, 40px);
       margin-bottom: 12px;
     }
 
     .hero p {
       font-size: 14px;
       color: #cbd5f5;
-      max-width: 600px;
+      max-width: 620px;
       margin: 0 auto;
     }
 
-    /* ========== 게시판 공통 스타일 ========== */
-    .boards-wrapper {
-      display: grid;
-      grid-template-columns: 1fr; /* 모바일 기본: 1열 */
-      gap: 32px;
-      margin: 24px 0 40px;
+    /* ===== 목차 섹션 ===== */
+    section {
+      padding: 20px 0;
     }
 
-    @media (min-width: 900px) {
-      .boards-wrapper {
-        grid-template-columns: 1fr 1fr; /* 화면이 넓어지면 2열(게시판 나란히) */
-      }
-    }
-
-    .board {
-      background: rgba(15, 23, 42, 0.95);
-      border-radius: 16px;
-      padding: 18px 18px 20px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      box-shadow: 0 12px 30px rgba(9, 9, 15, 0.85);
-    }
-
-    .board-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 12px;
-    }
-
-    .board-title {
+    .section-title {
       font-size: 18px;
+      margin-bottom: 10px;
       font-weight: 600;
     }
 
-    .board-description {
-      font-size: 11px;
-      color: #9ca3af;
-    }
-
-    /* ========== 글 작성 폼 ========== */
-    .post-form {
+    .toc-list {
+      list-style: none;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.9);
+      padding: 14px 16px;
       display: grid;
-      gap: 8px;
-      margin-bottom: 14px;
+      gap: 10px;
     }
 
-    .post-form-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .post-form-row > div {
-      flex: 1;
-    }
-
-    .post-form label {
-      display: block;
-      font-size: 11px;
-      margin-bottom: 2px;
-      color: #e5e7eb;
-    }
-
-    .post-form input,
-    .post-form textarea {
-      width: 100%;
-      border-radius: 8px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      background: rgba(15, 23, 42, 0.9);
-      color: #e5e7eb;
-      font-size: 13px;
-      padding: 6px 8px;
-    }
-
-    .post-form textarea {
-      resize: vertical;
-      min-height: 60px;
-    }
-
-    .post-form button {
-      align-self: end;
-      border: none;
-      border-radius: 999px;
-      padding: 7px 14px;
-      font-size: 13px;
-      cursor: pointer;
-      background: linear-gradient(135deg, #38bdf8, #6366f1);
-      color: white;
-      box-shadow: 0 8px 18px rgba(56, 189, 248, 0.35);
-      transition: transform 0.1s ease, box-shadow 0.1s ease;
-    }
-
-    .post-form button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 12px 26px rgba(56, 189, 248, 0.5);
-    }
-
-    .error-message {
-      font-size: 11px;
-      color: #fda4af;
-      min-height: 14px; /* 에러가 없을 때도 영역 확보해서 레이아웃 안튀게 */
-    }
-
-    /* ========== 게시글 목록 테이블 ========== */
-    .posts-table-wrapper {
-      border-radius: 12px;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      overflow: hidden;
-      background: rgba(15, 23, 42, 0.9);
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-    }
-
-    thead {
-      background: rgba(17, 24, 39, 0.9);
-    }
-
-    th, td {
-      padding: 6px 8px;
-      text-align: left;
-    }
-
-    th {
-      font-weight: 600;
-      color: #e5e7eb;
-      border-bottom: 1px solid rgba(55, 65, 81, 1);
-    }
-
-    tbody tr:nth-child(even) {
-      background: rgba(15, 23, 42, 0.7);
-    }
-
-    tbody tr:nth-child(odd) {
-      background: rgba(15, 23, 42, 0.4);
-    }
-
-    .post-title-cell {
+    .toc-item-title {
+      font-size: 15px;
       font-weight: 500;
+      margin-bottom: 2px;
     }
 
-    .post-meta-cell {
-      white-space: nowrap;
-      color: #9ca3af;
-      font-size: 11px;
-    }
-
-    .post-content-cell {
-      font-size: 11px;
-      color: #cbd5f5;
-    }
-
-    .no-posts {
-      text-align: center;
-      padding: 10px 8px;
-      color: #9ca3af;
+    .toc-item-desc {
       font-size: 12px;
-    }
-
-    /* ========== 푸터 ========== */
-    footer {
-      border-top: 1px solid rgba(148, 163, 184, 0.3);
-      padding: 18px 0 24px;
-      text-align: center;
-      font-size: 11px;
       color: #9ca3af;
     }
-  </style>
-</head>
-<body>
-  <!--
-    ==============================
-    헤더 & 네비게이션 영역
-    ==============================
-    - 상단 고정 메뉴바
-    - 로고와 간단 링크
-  -->
-  <header>
-    <div class="container">
-      <nav>
-        <div class="logo">두 개의 게시판 예시</div>
-        <ul class="nav-links">
-          <!-- 실제로는 페이지 내 앵커(#notice-board, #free-board)에 연결 -->
-          <li><a href="#notice-board">공지사항</a></li>
-          <li><a href="#free-board">자유게시판</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
 
-  <!--
-    ==============================
-    메인 히어로 섹션
-    ==============================
-    - 페이지 소개 영역
-  -->
-  <main class="container">
-    <section class="hero">
-      <h1>게시판이 2개 있는 간단한 홈페이지</h1>
-      <p>
-        아래에는 <strong>공지사항 게시판</strong>과 <strong>자유게시판</strong> 두 개가 있습니다.<br />
-        각 게시판마다 제목, 작성자, 내용을 입력하고 글을 등록할 수 있습니다.<br />
-        이 예시는 백엔드 서버 없이 <code>localStorage</code>에만 저장하는 프런트엔드 데모입니다.
-      </p>
-    </section>
-
-    <!--
-      ==============================
-      게시판 2개를 묶는 래퍼
-      ==============================
-      - 화면이 넓으면 좌우 2개, 좁으면 위아래 2개로 보이게 구현
-    -->
-    <section class="boards-wrapper">
-
-      <!--
-        ========================================
-        게시판 1: 공지사항
-        ========================================
-        - data-board-type="notice" 로 이 게시판을 구분
-      -->
-      <article class="board" id="notice-board" data-board-type="notice">
-        <header class="board-header">
-          <div>
-            <h2 class="board-title">공지사항</h2>
-            <p class="board-description">중요한 공지, 일정, 안내사항 등을 올리는 게시판입니다.</p>
-          </div>
-        </header>
-
-        <!--
-          ----- 글 작성 폼 -----
-          - 제목, 작성자, 내용 입력 후 "등록" 버튼 클릭
-          - 실제로는 JS에서 submit 이벤트를 가로채서 처리
-        -->
-        <form class="post-form">
-          <div class="post-form-row">
-            <div>
-              <label for="notice-title">제목</label>
-              <input id="notice-title" name="title" type="text" placeholder="제목을 입력하세요" />
-            </div>
-            <div>
-              <label for="notice-author">작성자</label>
-              <input id="notice-author" name="author" type="text" placeholder="작성자" />
-            </div>
-          </div>
-          <div>
-            <label for="notice-content">내용</label>
-            <textarea id="notice-content" name="content" placeholder="공지 내용을 입력하세요"></textarea>
-          </div>
-          <div class="post-form-row">
-            <div class="error-message" data-error></div>
-            <button type="submit">공지 등록</button>
-          </div>
-        </form>
-
-        <!--
-          ----- 게시글 목록 테이블 -----
-          - JS에서 <tbody> 부분을 동적으로 채움
-          - 번호, 제목, 작성자/날짜, 간단한 내용
-        -->
-        <div class="posts-table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 40px;">번호</th>
-                <th>제목</th>
-                <th style="width: 120px;">작성자 / 날짜</th>
-              </tr>
-            </thead>
-            <tbody data-posts-body>
-              <!-- JS에서 행(<tr>)을 추가 -->
-            </tbody>
-          </table>
-        </div>
-      </article>
-
-      <!--
-        ========================================
-        게시판 2: 자유게시판
-        ========================================
-        - 데이터 구조와 동작은 공지사항과 동일하지만
-          data-board-type="free" 로만 다름
-      -->
-      <article class="board" id="free-board" data-board-type="free">
-        <header class="board-header">
-          <div>
-            <h2 class="board-title">자유게시판</h2>
-            <p class="board-description">잡담, 질문, 후기 등 자유롭게 글을 올리는 공간입니다.</p>
-          </div>
-        </header>
-
-        <!-- 글 작성 폼 (자유게시판용) -->
-        <form class="post-form">
-          <div class="post-form-row">
-            <div>
-              <label for="free-title">제목</label>
-              <input id="free-title" name="title" type="text" placeholder="제목을 입력하세요" />
-            </div>
-            <div>
-              <label for="free-author">작성자</label>
-              <input id="free-author" name="author" type="text" placeholder="작성자" />
-            </div>
-          </div>
-          <div>
-            <label for="free-content">내용</label>
-            <textarea id="free-content" name="content" placeholder="자유롭게 글을 작성해 주세요"></textarea>
-          </div>
-          <div class="post-form-row">
-            <div class="error-message" data-error></div>
-            <button type="submit">글 등록</button>
-          </div>
-        </form>
-
-        <!-- 게시글 목록 테이블 (자유게시판용) -->
-        <div class="posts-table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 40px;">번호</th>
-                <th>제목</th>
-                <th style="width: 120px;">작성자 / 날짜</th>
-              </tr>
-            </thead>
-            <tbody data-posts-body>
-              <!-- JS에서 행(<tr>)을 추가 -->
-            </tbody>
-          </table>
-        </div>
-      </article>
-
-    </section>
-  </main>
-
-  <!-- 푸터 -->
-  <footer>
-    게시판 예제 · 백엔드 없는 프런트엔드 데모 · © <span id="year"></span>
-  </footer>
-
-  <!--
-    ========================================
-    자바스크립트 영역
-    ========================================
-    - 기능 요약:
-      1. 페이지 로드시 localStorage에서 각 게시판의 글 목록을 불러옴
-      2. 폼 제출 시 새 글을 배열에 추가하고 localStorage에 저장
-      3. 테이블(<tbody>)을 렌더링하여 화면에 표시
-      4. 새로고침해도 localStorage 기반으로 글이 유지됨
-    - 실제 서버/DB는 없고, 브라우저 내부에만 저장됨(간단 데모용)
-  -->
-  <script>
-    // ===== 공통 상수: localStorage에 사용할 키 이름 정의 =====
-    const STORAGE_KEYS = {
-      notice: 'board_notice_posts', // 공지사항 게시판용 key
-      free: 'board_free_posts'      // 자유게시판 게시판용 key
-    };
-
-    // ===== 유틸 함수: 오늘 날짜를 보기 좋게 포맷 =====
-    function formatDate(date) {
-      // date: Date 객체
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      const hours = String(date.getHours()).padStart(2, '0');
-      const minutes = String(date.getMinutes()).padStart(2, '0');
-      return `${year}-${month}-${day} ${hours}:${minutes}`;
-    }
-
-    // ===== localStorage에서 게시글 목록 불러오기 =====
-    function loadPosts(boardType) {
-      // boardType: 'notice' 또는 'free'
-      const key = STORAGE_KEYS[boardType];
-      const raw = localStorage.getItem(key);
-      if (!raw) {
-        return []; // 저장된 게 없다면 빈 배열 반환
-      }
-      try {
-        // JSON 문자열을 실제 배열로 변환
-        const parsed = JSON.parse(raw);
-        // 배열인지 체크 (아닐 경우 대비)
-        return Array.isArray(parsed) ? parsed : [];
-      } catch (e) {
-        console.error('게시글 로딩 오류:', e);
-        return [];
-      }
-    }
-
-    // ===== localStorage에 게시글 목록 저장하기 =====
-    function savePosts(boardType, posts) {
-      const key = STORAGE_KEYS[boardType];
-      localStorage.setItem(key, JSON.stringify(posts));
-    }
-
-    // ===== 특정 게시판의 테이블 영역을 렌더링(초기/갱신) =====
-    function renderBoardPosts(boardElement, posts) {
-      // boardElement: <article class="board" ...>
-      // posts: [{id, title, author, content, createdAt}, ...]
-
-      // data-posts-body 속성을 가진 <tbody> 찾기
-      const tbody = boardElement.querySelector('[data-posts-body]');
-      tbody.innerHTML = ''; // 이전 내용을 모두 지움
-
-      if (!posts.length) {
-        // 게시글이 하나도 없을 때: "게시글이 없습니다" 한 줄 표시
-        const noRow = document.createElement('tr');
-        const noCell = document.createElement('td');
-        noCell.colSpan = 3;
-        noCell.className = 'no-posts';
-        noCell.textContent = '등록된 게시글이 없습니다.';
-        noRow.appendChild(noCell);
-        tbody.appendChild(noRow);
-        return;
-      }
-
-      // 게시글이 있을 경우: 최근 글이 위로 오도록 역순 정렬
-      const sorted = [...posts].sort((a, b) => b.id - a.id);
-
-      sorted.forEach((post, index) => {
-        const row = document.createElement('tr');
-
-        // 번호 셀: 단순히 index + 1 로 표시
-        const numberCell = document.createElement('td');
-        numberCell.textContent = index + 1;
-
-        // 제목+내용 셀: 제목은 굵게, 내용은 작은 글씨로
-        const titleCell = document.createElement('td');
-        titleCell.className = 'post-title-cell';
-        const titleSpan = document.createElement('div');
-        titleSpan.textContent = post.title;
-
-        const contentSpan = document.createElement('div');
-        contentSpan.className = 'post-content-cell';
-        // 내용이 너무 길 경우를 대비해 80자까지만 보여주고 나머지는 "..." 붙이기
-        const preview = post.content.length > 80
-          ? post.content.slice(0, 80) + '...'
-          : post.content;
-        contentSpan.textContent = preview;
-
-        titleCell.appendChild(titleSpan);
-        titleCell.appendChild(contentSpan);
-
-        // 작성자/날짜 셀
-        const metaCell = document.createElement('td');
-        metaCell.className = 'post-meta-cell';
-        metaCell.textContent = `${post.author || '익명'} · ${post.createdAt}`;
-
-        row.appendChild(numberCell);
-        row.appendChild(titleCell);
-        row.appendChild(metaCell);
-        tbody.appendChild(row);
-      });
-    }
-
-    // ===== 특정 게시판에 글 추가 처리 =====
-    function handlePostSubmit(boardElement, boardType, event) {
-      event.preventDefault(); // 기본 폼 제출(페이지 새로고침) 막기
-
-      const form = event.target;
-      // 폼 안의 입력 요소 찾기
-      const titleInput = form.querySelector('input[name="title"]');
-      const authorInput = form.querySelector('input[name="author"]');
-      const contentTextarea = form.querySelector('textarea[name="content"]');
-      const errorBox = form.querySelector('[data-error]');
-
-      const title = titleInput.value.trim();
-      const author = authorInput.value.trim();
-      const content = contentTextarea.value.trim();
-
-      // 아주 간단한 유효성 검사 (제목/내용은 필수)
-      if (!title || !content) {
-        errorBox.textContent = '제목과 내용을 모두 입력해 주세요.';
-        return;
-      }
-
-      // 에러 메시지 제거
-      errorBox.textContent = '';
-
-      // 기존 게시글 배열 불러오기
-      const posts = loadPosts(boardType);
-
-      // 새 글 객체 생성
-      const newPost = {
-        id: Date.now(),                 // 간단한 고유 ID (현재 시간)
-        title,
-        author,
-        content,
-        createdAt: formatDate(new Date())
-      };
-
-      // 배열에 새 글 추가
-      posts.push(newPost);
-      // localStorage에 다시 저장
-      savePosts(boardType, posts);
-      // 화면 갱신
-      renderBoardPosts(boardElement, posts);
-
-      // 입력 폼 비우기
-      titleInput.value = '';
-      authorInput.value = '';
-      contentTextarea.value = '';
-    }
-
-    // ===== 초기화: DOM이 준비되면 실행 =====
-    document.addEventListener('DOMContentLoaded', () => {
-      // 푸터의 현재 연도 표시
-      document.getElementById('year').textContent = new Date().getFullYear();
-
-      // 모든 게시판(<article class="board">) 요소를 찾음
-      const boardElements = document.querySelectorAll('.board');
-
-      boardElements.forEach((boardElement) => {
-        // data-board-type 속성에서 게시판 종류('notice', 'free') 가져오기
-        const boardType = boardElement.getAttribute('data-board-type');
-        if (!boardType) return;
-
-        // 1) 페이지 로드시 기존 글을 localStorage에서 불러와 렌더링
-        const posts = loadPosts(boardType);
-        renderBoardPosts(boardElement, posts);
-
-        // 2) 폼 submit 이벤트 연결
-        const form = boardElement.querySelector('.post-form');
-        if (form) {
-          form.addEventListener('submit', (event) =>
-            handlePostSubmit(boardElement, boardType, event)
-          );
-        }
-      });
-    });
-  </script>
-</body>
-</html>
+    .toc-link {
+      display: block;
+      padding: 8px 10px;
+      border-radius: 12px;
+      transition: back
