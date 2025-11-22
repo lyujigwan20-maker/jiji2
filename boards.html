@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>JG 홈페이지 - 게시판</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    /* ===== 기본 스타일 ===== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      background: #0f172a;
+      color: #e5e7eb;
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* ===== 헤더 / 네비게이션 ===== */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      backdrop-filter: blur(10px);
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+    }
+
+    .logo {
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 16px;
+      font-size: 14px;
+    }
+
+    .nav-links a {
+      opacity: 0.8;
+    }
+
+    .nav-links a:hover {
+      opacity: 1;
+    }
+
+    /* ===== 상단 설명 ===== */
+    .intro {
+      padding: 40px 0 20px;
+    }
+
+    .intro-title {
+      font-size: 22px;
+      margin-bottom: 6px;
+    }
+
+    .intro-subtitle {
+      font-size: 13px;
+      color: #cbd5f5;
+    }
+
+    /* ===== 게시판 레이아웃 ===== */
+    .boards-wrapper {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 32px;
+      margin: 20px 0 40px;
+    }
+
+    @media (min-width: 900px) {
+      .boards-wrapper {
+        grid-template-columns: 1fr 1fr; /* 넓은 화면에서는 나란히 2개 */
+      }
+    }
+
+    .board {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 16px;
+      padding: 18px 18px 20px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      box-shadow: 0 12px 30px rgba(9, 9, 15, 0.85);
+    }
+
+    .board-header {
+      margin-bottom: 12px;
+    }
+
+    .board-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .board-description {
+      font-size: 11px;
+      color: #9ca3af;
+    }
+
+    /* ===== 글 작성 폼 ===== */
+    .post-form {
+      display: grid;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .post-form-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .post-form-row > div {
+      flex: 1;
+    }
+
+    .post-form label {
+      display: block;
+      font-size: 11px;
+      margin-bottom: 2px;
+    }
+
+    .post-form input,
+    .post-form textarea {
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.9);
+      color: #e5e7eb;
+      font-size: 13px;
+      padding: 6px 8px;
+    }
+
+    .post-form textarea {
+      resize: vertical;
+      min-height: 60px;
+    }
+
+    .post-form button {
+      align-self: end;
+      border: none;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 13px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #38bdf8, #6366f1);
+      color: white;
+      box-shadow: 0 8px 18px rgba(56, 189, 248, 0.35);
+      transition: transform 0.1s ease, box-shadow 0.1s ease;
+    }
+
+    .post-form button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 12px 26px rgba(56, 189, 248, 0.5);
+    }
+
+    .error-message {
+      font-size: 11px;
+      color: #fda4af;
+      min-height: 14px;
+    }
+
+    /* ===== 게시글 목록 ===== */
+    .posts-table-wrapper {
+      border-radius: 12px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      overflow: hidden;
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    thead {
+      background: rgba(17, 24, 39, 0.9);
+    }
+
+    th, td {
+      padding: 6px 8px;
+      text-align: left;
+    }
+
+    th {
+      font-weight: 600;
+      color: #e5e7eb;
+      border-bottom: 1px solid rgba(55, 65, 81, 1);
+    }
+
+    tbody tr:nth-child(even) {
+      background: rgba(15, 23, 42, 0.7);
+    }
+    tbody tr:nth-child(odd) {
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    .post-title-cell {
+      font-weight: 500;
+    }
+
+    .post-meta-cell {
+      white-space: nowrap;
+      color: #9ca3af;
+      font-size: 11px;
+    }
+
+    .post-content-cell {
+      font-size: 11px;
+      color: #cbd5f5;
+    }
+
+    .no-posts {
+      text-align: center;
+      padding: 10px 8px;
+      color: #9ca3af;
+      font-size: 12px;
+    }
+
+    footer {
+      border-top: 1px solid rgba(148, 163, 184, 0.3);
+      padding: 18px 0 24px;
+      text-align: center;
+      font-size: 11px;
+      color: #9ca3af;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <!--
+    게시판 페이지
+    - 상단 메뉴에서 다시 홈(index.html)으로 돌아갈 수 있음
+    - 공지사항, 자유게시판 두 개의 board를 배치
+  -->
+  <header>
+    <div class="container">
+      <nav>
+        <div class="logo">JG 게시판</div>
+        <ul class="nav-links">
+          <li><a href="index.html">홈</a></li>
+          <li><a href="boards.html">게시판</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 페이지 상단 설명 -->
+    <section class="intro">
+      <h1 class="intro-title">게시판</h1>
+      <p class="intro-subtitle">
+        공지사항과 자유게시판이 한 페이지에 모여 있습니다.<br />
+        메인 페이지의 목차에서 각각 바로 이동할 수도 있습니다.
+      </p>
+    </section>
+
+    <!-- 게시판 두 개 (공지사항 / 자유게시판) -->
+    <section class="boards-wrapper">
+      <!-- 공지사항 게시판 -->
+      <!-- id="notice-board" : 메인 페이지 목차에서 #notice-board로 앵커 이동 -->
+      <article class="board" id="notice-board" data-board-type="notice">
+        <header class="board-header">
+          <h2 class="board-title">공지사항</h2>
+          <p class="board-description">
+            중요한 일정, 안내, 공지 글을 올리는 공간입니다.
+          </p>
+        </header>
+
+        <form class="post-form">
+          <div class="post-form-row">
+            <div>
+              <label for="notice-title">제목</label>
+              <input id="notice-title" name="title" type="text" placeholder="제목을 입력하세요" />
+            </div>
+            <div>
+              <label for="notice-author">작성자</label>
+              <input id="notice-author" name="author" type="text" placeholder="작성자" />
+            </div>
+          </div>
+          <div>
+            <label for="notice-content">내용</label>
+            <textarea id="notice-content" name="content" placeholder="공지 내용을 입력하세요"></textarea>
+          </div>
+          <div class="post-form-row">
+            <div class="error-message" data-error></div>
+            <button type="submit">공지 등록</button>
+          </div>
+        </form>
+
+        <div class="posts-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 40px;">번호</th>
+                <th>제목</th>
+                <th style="width: 120px;">작성자 / 날짜</th>
+              </tr>
+            </thead>
+            <tbody data-posts-body>
+              <!-- JS에서 행을 채움 -->
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <!-- 자유게시판 -->
+      <!-- id="free-board" : 메인 페이지 목차에서 #free-board로 앵커 이동 -->
+      <article class="board" id="free-board" data-board-type="free">
+        <header class="board-header">
+          <h2 class="board-title">자유게시판</h2>
+          <p class="board-description">
+            잡담, 후기, 질문 등 자유롭게 글을 올릴 수 있습니다.
+          </p>
+        </header>
+
+        <form class="post-form">
+          <div class="post-form-row">
+            <div>
+              <label for="free-title">제목</label>
+              <input id="free-title" name="title" type="text" placeholder="제목을 입력하세요" />
+            </div>
+            <div>
+              <label for="free-author">작성자</label>
+              <input id="free-author" name="author" type="text" placeholder="작성자" />
+            </div>
+          </div>
+          <div>
+            <label for="free-content">내용</label>
+            <textarea id="free-content" name="content" placeholder="자유롭게 작성해 주세요"></textarea>
+          </div>
+          <div class="post-form-row">
+            <div class="error-message" data-error></div>
+            <button type="submit">글 등록</button>
+          </div>
+        </form>
+
+        <div class="posts-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 40px;">번호</th>
+                <th>제목</th>
+                <th style="width: 120px;">작성자 / 날짜</th>
+              </tr>
+            </thead>
+            <
